@@ -25,6 +25,8 @@ face2 = pygame.image.load('Pile_ou_face/Piece face2.png').convert_alpha()
 pile2 = pygame.image.load('Pile_ou_face/Piece pile2.png').convert_alpha()
 icone = pygame.image.load('images/icone.png').convert_alpha()
 paradis = pygame.image.load('images/paradis.png').convert_alpha()
+fleche_retour = pygame.image.load('images/Fleche_retour.png').convert_alpha()
+fleche_retour2 = pygame.image.load('images/Fleche_retour2.png').convert_alpha()
 
 
 pygame.display.set_icon(icone)

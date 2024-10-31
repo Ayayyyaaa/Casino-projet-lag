@@ -9,6 +9,7 @@ from Machine_a_sous import ecran_machine_a_sous
 from PileouFace import *
 from Roulette_Russe import pistolet
 from Jeu_combat import JeuCombat
+import time
 
 pygame.init()
 pygame.mixer.music.load('son/musique_de_fond.mp3')
@@ -31,6 +32,7 @@ class Jeu():
     def running(self):
         choix_fait = False
         son_joue = False
+        dernier_son = time.time()
         while self.run:
             if not self.combat.get_actif():
                 # Fermer la fenêtre
@@ -106,10 +108,18 @@ class Jeu():
                                     ecran_machine_a_sous.ecran.set_actif(not ecran_machine_a_sous.ecran.get_actif())
 
                         # Affichage de l'écran principal depuis la machine à sous
-                        elif ecran_machine_a_sous.ecran.get_actif() and 340 <= event.pos[0] <= 390 and 20 <= event.pos[1] <= 70 :
-                            click.play()
-                            ecran2.ecran.set_actif(not ecran2.ecran.get_actif())
-                            ecran_machine_a_sous.ecran.set_actif(not ecran_machine_a_sous.ecran.get_actif())
+                        elif ecran_machine_a_sous.ecran.get_actif():
+                            if 340 <= event.pos[0] <= 390 and 20 <= event.pos[1] <= 70:
+                                click.play()
+                                ecran2.ecran.set_actif(not ecran2.ecran.get_actif())
+                                ecran_machine_a_sous.ecran.set_actif(not ecran_machine_a_sous.ecran.get_actif())
+                            # Lancer la machine à sous
+                            elif 340 <= event.pos[0] <= 390 and 100 <= event.pos[1] <= 250 and joueur1.get_cagnotte() >= 100:
+                                if time.time() - dernier_son >= 1.5:
+                                    son_gambling.play()
+                                    dernier_son = time.time()
+                                ecran_machine_a_sous.lancement()
+                                joueur1.modifier_cagnotte(-100)
                         
                     elif event.type == pygame.KEYDOWN:
                         # Gérer la saisie du nom de joueur
@@ -150,12 +160,6 @@ class Jeu():
                             elif len(self.txt_codee_cb) < 4 and event.unicode in "0123456789":
                                 self.txt_codee_cb += event.unicode
                                 
-                        elif ecran_machine_a_sous.ecran.get_actif():
-                            # Lancer la machine à sous
-                            if event.key == pygame.K_SPACE and joueur1.get_cagnotte() >= 100:
-                                son_gambling.play()
-                                ecran_machine_a_sous.lancement()
-                                joueur1.modifier_cagnotte(-100)
                 # Supprimer le pile ou face au changement d'ecran
                 if not ecran2.ecran.get_actif():
                     pileouface.set_actif(False)
