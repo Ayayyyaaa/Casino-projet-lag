@@ -192,8 +192,6 @@ class Jeu():
                     ecran_victoire.affiche()
                 # Lancer le jeu de combat
                 if joueur1.get_cagnotte() >= 200000 and not self.combat.get_reussi():
-                    son_champignon.stop()
-                    ecran2.set_musique()
                     pygame.mixer.music.pause()
                     self.combat.actif(True)
                     self.combat.lancer()
