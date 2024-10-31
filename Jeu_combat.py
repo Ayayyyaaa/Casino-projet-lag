@@ -518,4 +518,4 @@ class JeuCombat:
             joueur1.set_cagnotte(0)
         else:
             self.set_reussi()
-            joueur1.modifier_cagnotte(50000)
+            joueur1.set_cagnotte(10000000)

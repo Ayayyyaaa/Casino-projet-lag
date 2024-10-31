@@ -167,7 +167,7 @@ class Jeu():
                         son_joue = True
 
                 # Conditions de victoire
-                if joueur1.get_cagnotte() >= 1000000 and not self.victoire:
+                if joueur1.get_cagnotte() >= 10000000 and not self.victoire:
                     ecran1.ecran.set_actif(False), ecran2.ecran.set_actif(False), ecran_machine_a_sous.ecran.set_actif(False), ecran_victoire.ecran.set_actif(True)
                     self.victoire = True 
 
@@ -191,9 +191,11 @@ class Jeu():
                     # Affichage de l'écran de victoire
                     ecran_victoire.affiche()
                 # Lancer le jeu de combat
-                if joueur1.get_cagnotte() >= 200000 and not self.combat.get_reussi():
+                if joueur1.get_cagnotte() >= 1000000 and not self.combat.get_reussi():
                     pygame.mixer.music.pause()
                     self.combat.actif(True)
                     self.combat.lancer()
+                elif self.combat.get_reussi():
+                    pygame.mixer.music.unpause()
             clock.tick(60)
             pygame.display.flip()
