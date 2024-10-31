@@ -9,4 +9,5 @@ rire_diabolique = pygame.mixer.Sound('son/rire_maurice.mp3')
 click = pygame.mixer.Sound('son/son_click.mp3')
 son_faux = pygame.mixer.Sound('son/son_faux.mp3')
 son_piece = pygame.mixer.Sound('son/son_piece.mp3')
-son_champignon = pygame.mixer.Sound('son/Le champignon de Paris.wav')
+son_champignon = 'son/Le champignon de Paris.wav'
+musique_de_fond = 'son/musique_de_fond.mp3'

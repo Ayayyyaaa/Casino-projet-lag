@@ -22,8 +22,23 @@ class Ecran:
 class Ecran1:
     def __init__(self):
         self.ecran = Ecran(True)
+        self.ancien_pseudo = joueur1.get_pseudo()
     def affiche(self):
         if self.ecran.get_actif():
+            if joueur1.get_pseudo() == 'Fredou':
+                if not pygame.mixer.music.get_busy() or self.ancien_pseudo != joueur1.get_pseudo():
+                    pygame.mixer.music.unload()
+                    pygame.mixer.music.load(son_champignon)
+                    pygame.mixer.music.set_volume(0.1)
+                    pygame.mixer.music.play(-1)
+                    self.ancien_pseudo = joueur1.get_pseudo()
+            else:
+                if not pygame.mixer.music.get_busy() or self.ancien_pseudo != joueur1.get_pseudo():
+                    pygame.mixer.music.unload()
+                    pygame.mixer.music.load(musique_de_fond)
+                    pygame.mixer.music.set_volume(0.3)  # Volume pour la musique de fond générale
+                    pygame.mixer.music.play(-1)
+                    self.ancien_pseudo = joueur1.get_pseudo()
             fenetre.blit(fond, (0, 0))
             if bouton1.get_x() <= pygame.mouse.get_pos()[0] <= bouton1.get_x() + bouton1.get_largeur() and bouton1.get_y() <= pygame.mouse.get_pos()[1] <= bouton1.get_y() + bouton1.get_hauteur():
                 fenetre.blit(entrer2, (105, 230))
@@ -34,7 +49,7 @@ class Ecran1:
 class Ecran2:
     def __init__(self):
         self.ecran = Ecran()
-        self.fond = None
+        self.fond = pygame.image.load('images/casino.jpg').convert()
         self.musique = False
     def set_musique(self):
         self.musique = False
@@ -42,20 +57,12 @@ class Ecran2:
         '''
         Permet d'afficher l'écran principal et de gérer l'animation des boutons et mettre à jour les animations des jeux.
         '''
-        if joueur1.get_pseudo() == 'Mr.Maurice' or joueur1.get_pseudo() == 'Mr Maurice' or joueur1.get_pseudo() == 'Maurice':
-            joueur1.set_pseudo('Le meilleur')  #Mettez nous des tickets et un 20/20 svp
         if joueur1.get_pseudo() == 'Fredou':
-            pygame.mixer.music.pause()
-            if not self.musique:
-                son_champignon.set_volume(0.1)
-                son_champignon.play(loops=-1)
-                self.musique = True
             self.fond = pygame.image.load('images/coeurfredou.png').convert()
         else:
-            self.musique = False
-            son_champignon.stop()
-            pygame.mixer.music.unpause()
             self.fond = pygame.image.load('images/casino.jpg').convert()
+        if joueur1.get_pseudo() == 'Mr.Maurice' or joueur1.get_pseudo() == 'Mr Maurice' or joueur1.get_pseudo() == 'Maurice':
+            joueur1.set_pseudo('Le meilleur')  #Mettez nous des tickets et un 20/20 svp
         fenetre.blit(self.fond, (0, 0))
         coin.activer_rotation()
         if ecran2.ecran.get_actif() and 330 <= pygame.mouse.get_pos()[0] <= 390 and 45 <= pygame.mouse.get_pos()[1] <= 75 :
@@ -90,7 +97,8 @@ class Ecran2:
         pistolet.update_vict(0.16,joueur1)  
 
         fenetre.blit(pileouface.get_image(),(170,140))
-        pileouface.update(0.20, joueur1)
+        if pileouface.get_actif():
+            pileouface.update(0.20, joueur1)
 
         if joueur1.get_pseudo() == '666' or joueur1.get_pseudo() == 'Satan':
             fenetre.blit(diable, (100, 2))
