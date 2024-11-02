@@ -23,27 +23,39 @@ class Ecran1:
     def __init__(self):
         self.ecran = Ecran(True)
         self.ancien_pseudo = joueur1.get_pseudo()
+        self.fin_combat = False
     def affiche(self):
         if self.ecran.get_actif():
-            if joueur1.get_pseudo() == 'Fredou':
-                if not pygame.mixer.music.get_busy() or self.ancien_pseudo != joueur1.get_pseudo():
-                    pygame.mixer.music.unload()
-                    pygame.mixer.music.load(son_champignon)
-                    pygame.mixer.music.set_volume(0.1)
-                    pygame.mixer.music.play(-1)
-                    self.ancien_pseudo = joueur1.get_pseudo()
-            else:
-                if not pygame.mixer.music.get_busy() or self.ancien_pseudo != joueur1.get_pseudo():
-                    pygame.mixer.music.unload()
-                    pygame.mixer.music.load(musique_de_fond)
-                    pygame.mixer.music.set_volume(0.3)  # Volume pour la musique de fond générale
-                    pygame.mixer.music.play(-1)
-                    self.ancien_pseudo = joueur1.get_pseudo()
             fenetre.blit(fond, (0, 0))
+            self.choisir_musique(False)
             if bouton1.get_x() <= pygame.mouse.get_pos()[0] <= bouton1.get_x() + bouton1.get_largeur() and bouton1.get_y() <= pygame.mouse.get_pos()[1] <= bouton1.get_y() + bouton1.get_hauteur():
                 fenetre.blit(entrer2, (105, 230))
             else:
                 fenetre.blit(entrer, (105, 230))
+    def choisir_musique(self,combat:bool):
+        '''Permet de chosir la musique de fond
+        Paramètres : 
+            - combat (bool) : Détermine si le combat face au boss à été réussi
+        Post-conditions :
+            - Si le joueur s'appelle Fredou et qu'il n'y a pas de musique de fond, que le joueur change de pseudo ou que le combat a été réussi, on charge un nouvelle musique (son_champignon)
+            - Sinon, s'il n'y a pas de musique de fond, que le joueur change de pseudo ou que le combat a été réussi, on charge un nouvelle musique (musique_de_fond)
+        '''
+        if joueur1.get_pseudo() == 'Fredou':
+            if not pygame.mixer.music.get_busy() or self.ancien_pseudo != joueur1.get_pseudo() or combat and not self.fin_combat:
+                pygame.mixer.music.unload()
+                pygame.mixer.music.load(son_champignon)
+                pygame.mixer.music.set_volume(0.1)
+                pygame.mixer.music.play(-1)
+                self.ancien_pseudo = joueur1.get_pseudo()
+                self.fin_combat = True
+        else:
+            if not pygame.mixer.music.get_busy() or self.ancien_pseudo != joueur1.get_pseudo() or combat and not self.fin_combat:
+                pygame.mixer.music.unload()
+                pygame.mixer.music.load(musique_de_fond)
+                pygame.mixer.music.set_volume(0.3)  # Volume pour la musique de fond générale
+                pygame.mixer.music.play(-1)
+                self.ancien_pseudo = joueur1.get_pseudo()
+                self.fin_combat = True
 
 
 class Ecran2:

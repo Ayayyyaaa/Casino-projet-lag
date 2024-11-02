@@ -11,3 +11,4 @@ son_faux = pygame.mixer.Sound('son/son_faux.mp3')
 son_piece = pygame.mixer.Sound('son/son_piece.mp3')
 son_champignon = 'son/Le champignon de Paris.wav'
 musique_de_fond = 'son/musique_de_fond.mp3'
+musique_combat = 'son/combat.mp3'

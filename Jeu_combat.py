@@ -153,13 +153,14 @@ class JeuCombat:
         self.hero_sprite_block = 0
         self.reussi = False
         self.run = False
-        self.cd_dgt10 = time.time()
-        self.cd_dgt20 = time.time()
-        self.cd_dgt5 = time.time()
-        self.cd_block_img = time.time()
+        self.cd_dgt10 = 0
+        self.cd_dgt20 = 0
+        self.cd_dgt5 = 0
+        self.cd_block_img = 0
         self.vie_hero = pygame.image.load("images/compteur.png")
         self.vie_boss = pygame.image.load("images/compteur.png")
         self.police = pygame.font.Font('8-bitanco.ttf', 15)
+        self.dmg = False
 
     def actif(self, etat):
         self.run = etat
@@ -180,7 +181,7 @@ class JeuCombat:
             # Si le boss est à portée du héros
             if self.hero.get_pos_x()-120 < self.boss.get_pos_x() < self.hero.get_pos_x() + 120:
                 # Le boss perd 5 Pv
-                self.boss.modif_pv(-50)
+                self.boss.modif_pv(-5)
                 # Affichage des dégâts subis
                 self.cd_dgt5 = time.time()
         # Si toutes les images ont été jouées :
@@ -328,8 +329,8 @@ class JeuCombat:
         # Faire progresser les images pour l'animation
         self.boss_sprite_attaque2 += speed
         self.boss.modif_img(attaque2_boss[int(self.boss_sprite_attaque2)])
-        # Si toutes les images ont été jouées :
-        if int(self.boss_sprite_attaque2) == len(attaque2_boss)-1:
+        # Si l'animation arrive au coup de l'attaque et que l'attaque n'a pas encore effectué ses dégâts :
+        if int(self.boss_sprite_attaque2) == 4 and not self.dmg:
             # Si le héros se trouve à portée du boss :
             if self.boss.get_pos_x()+120 > self.hero.get_pos_x() > self.boss.get_pos_x() - 120 and self.hero.get_pos_y() > 250 and not self.hero.get_block():
                 # Le héros perd 20 Pv
@@ -344,9 +345,13 @@ class JeuCombat:
                 # Image du block
                 self.cd_block_img = time.time()
                 print("Bloqué !")
+            self.dmg = True
+        # Si toutes les images ont été jouées :
+        elif int(self.boss_sprite_attaque2) == len(attaque2_boss)-1:
             # On remet tout à 0
             self.boss_sprite_attaque2 = 0
             self.atk2 = False
+            self.dmg = False
             self.boss.set_cd_attaque2()
             self.boss.set_attaque2_dispo(False)
 

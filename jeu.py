@@ -196,10 +196,14 @@ class Jeu():
                     ecran_victoire.affiche()
                 # Lancer le jeu de combat
                 if joueur1.get_cagnotte() >= 1000000 and not self.combat.get_reussi():
-                    pygame.mixer.music.pause()
+                    pygame.mixer.music.unload()
+                    pygame.mixer.music.load(musique_combat)
+                    pygame.mixer.music.set_volume(0.3)
+                    pygame.mixer.music.play(-1)
                     self.combat.actif(True)
                     self.combat.lancer()
                 elif self.combat.get_reussi():
-                    pygame.mixer.music.unpause()
+                    print(pygame.mixer.music.get_busy())
+                    ecran1.choisir_musique(True)
             clock.tick(60)
             pygame.display.flip()
