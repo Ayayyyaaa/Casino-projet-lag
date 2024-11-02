@@ -12,3 +12,7 @@ son_piece = pygame.mixer.Sound('son/son_piece.mp3')
 son_champignon = 'son/Le champignon de Paris.wav'
 musique_de_fond = 'son/musique_de_fond.mp3'
 musique_combat = 'son/combat.mp3'
+musique_victoire = 'son/paradis.mp3'
+son_epee = pygame.mixer.Sound('son/son_slash.wav')
+aie_hero = pygame.mixer.Sound('son/mc-hurt.mp3')
+aie_boss = pygame.mixer.Sound('son/degat_boss.mp3')

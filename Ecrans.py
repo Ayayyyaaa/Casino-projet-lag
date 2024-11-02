@@ -5,7 +5,6 @@ from img import *
 from Roulette_Russe import pistolet
 from PileouFace import pileouface
 from sons import *
-import sys
 
 pygame.mixer.init()
 
@@ -27,12 +26,12 @@ class Ecran1:
     def affiche(self):
         if self.ecran.get_actif():
             fenetre.blit(fond, (0, 0))
-            self.choisir_musique(False)
+            self.choisir_musique()
             if bouton1.get_x() <= pygame.mouse.get_pos()[0] <= bouton1.get_x() + bouton1.get_largeur() and bouton1.get_y() <= pygame.mouse.get_pos()[1] <= bouton1.get_y() + bouton1.get_hauteur():
                 fenetre.blit(entrer2, (105, 230))
             else:
                 fenetre.blit(entrer, (105, 230))
-    def choisir_musique(self,combat:bool):
+    def choisir_musique(self):
         '''Permet de chosir la musique de fond
         Paramètres : 
             - combat (bool) : Détermine si le combat face au boss à été réussi
@@ -41,7 +40,7 @@ class Ecran1:
             - Sinon, s'il n'y a pas de musique de fond, que le joueur change de pseudo ou que le combat a été réussi, on charge un nouvelle musique (musique_de_fond)
         '''
         if joueur1.get_pseudo() == 'Fredou':
-            if not pygame.mixer.music.get_busy() or self.ancien_pseudo != joueur1.get_pseudo() or combat and not self.fin_combat:
+            if not pygame.mixer.music.get_busy() or self.ancien_pseudo != joueur1.get_pseudo():
                 pygame.mixer.music.unload()
                 pygame.mixer.music.load(son_champignon)
                 pygame.mixer.music.set_volume(0.1)
@@ -49,7 +48,7 @@ class Ecran1:
                 self.ancien_pseudo = joueur1.get_pseudo()
                 self.fin_combat = True
         else:
-            if not pygame.mixer.music.get_busy() or self.ancien_pseudo != joueur1.get_pseudo() or combat and not self.fin_combat:
+            if not pygame.mixer.music.get_busy() or self.ancien_pseudo != joueur1.get_pseudo():
                 pygame.mixer.music.unload()
                 pygame.mixer.music.load(musique_de_fond)
                 pygame.mixer.music.set_volume(0.3)  # Volume pour la musique de fond générale
@@ -136,6 +135,12 @@ class EcranVictoire:
         Permet d'afficher l'écran de victoire.
         '''
         fenetre.blit(paradis, (0, 0))
+       
+        if not pygame.mixer.music.get_busy():
+            pygame.mixer.music.unload()
+            pygame.mixer.music.load(musique_victoire)
+            pygame.mixer.music.play(-1)
+
         if bouton1.get_x() <= pygame.mouse.get_pos()[0] <= bouton1.get_x() + bouton1.get_largeur() and bouton1.get_y() <= pygame.mouse.get_pos()[1] <= bouton1.get_y() + bouton1.get_hauteur():
             fenetre.blit(self.retour2, (105, 230))
         else:

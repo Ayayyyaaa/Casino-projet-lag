@@ -12,8 +12,6 @@ from Jeu_combat import JeuCombat
 import time
 
 pygame.init()
-pygame.mixer.music.load('son/musique_de_fond.mp3')
-pygame.mixer.music.play(-1)
 
 class Jeu():
     def __init__(self):
@@ -59,6 +57,8 @@ class Jeu():
                         # Gérer les boutons pour accéder à l'écran 2 (écran principal)
                         if bouton1.get_x() <= event.pos[0] <= bouton1.get_x() + bouton1.get_largeur() and bouton1.get_y() <= event.pos[1] <= bouton1.get_y() + bouton1.get_hauteur():
                             if ecran_victoire.ecran.get_actif():
+                                pygame.mixer.music.unload()
+                                ecran1.choisir_musique()
                                 ecran_victoire.ecran.set_actif(False)
                                 ecran2.ecran.set_actif(True)
                             elif ecran1.ecran.get_actif() or ecran2.ecran.get_actif():
@@ -202,8 +202,5 @@ class Jeu():
                     pygame.mixer.music.play(-1)
                     self.combat.actif(True)
                     self.combat.lancer()
-                elif self.combat.get_reussi():
-                    print(pygame.mixer.music.get_busy())
-                    ecran1.choisir_musique(True)
             clock.tick(60)
             pygame.display.flip()
