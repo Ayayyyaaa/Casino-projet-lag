@@ -2,6 +2,7 @@ import pygame
 import numpy
 from fonctions import *
 from Ecrans import Ecran
+from objets_et_variables import joueur1
 
 class Emplacement(pygame.sprite.Sprite):
 
@@ -40,7 +41,7 @@ class EcranMachineASous:
         fenetre.blit(self.fond, (0, 0))
         self.emplacements.draw(fenetre)
         comic = pygame.font.SysFont("comicsansms", 30)
-        text = comic.render(str(joueur1.get_cagnotte()) + " pièces", True, blanc)
+        text = comic.render(str(int(joueur1.get_cagnotte())) + " pièces", True, blanc)
         fenetre.blit(text, (10, 0))
         if 340 <= pygame.mouse.get_pos()[0] <= 390 and 25 <= pygame.mouse.get_pos()[1] <= 65:
             fenetre.blit(fleche_retour2, (341, 21))
@@ -62,10 +63,10 @@ class EcranMachineASous:
         proba_fruits = [0.2, 0.25, 0.4, 0.12, 0.03]
 
         fruits_dict_gains = {
-            "orange": 500,
-            "cerise": 1000,
-            "pomme": 2300,
-            "pasteque": 4000,
+            "orange": 500 + joueur1.get_cagnotte()/40,
+            "cerise": 1000 + joueur1.get_cagnotte()/25,
+            "pomme": 2300 + joueur1.get_cagnotte()/15,
+            "pasteque": 4000 + joueur1.get_cagnotte()/5,
             "pomme_dore": 1000000
         }
         global jetons

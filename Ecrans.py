@@ -39,7 +39,7 @@ class Ecran1:
             - Si le joueur s'appelle Fredou et qu'il n'y a pas de musique de fond, que le joueur change de pseudo ou que le combat a été réussi, on charge un nouvelle musique (son_champignon)
             - Sinon, s'il n'y a pas de musique de fond, que le joueur change de pseudo ou que le combat a été réussi, on charge un nouvelle musique (musique_de_fond)
         '''
-        if joueur1.get_pseudo() == 'Fredou':
+        if joueur1.get_pseudo().lower() == 'fredou':
             if not pygame.mixer.music.get_busy() or self.ancien_pseudo != joueur1.get_pseudo():
                 pygame.mixer.music.unload()
                 pygame.mixer.music.load(son_champignon)
@@ -68,14 +68,19 @@ class Ecran2:
         '''
         Permet d'afficher l'écran principal et de gérer l'animation des boutons et mettre à jour les animations des jeux.
         '''
-        if joueur1.get_pseudo() == 'Fredou':
+        if joueur1.get_pseudo().lower() == 'fredou':
             self.fond = pygame.image.load('images/coeurfredou.png').convert()
+        elif joueur1.get_pseudo().lower() == 'mr.maurice' or joueur1.get_pseudo().lower() == 'mr maurice' or joueur1.get_pseudo().lower() == 'maurice':
+            joueur1.set_pseudo('Le meilleur')  #Mettez nous des tickets et un 20/20 svp
+        elif joueur1.get_pseudo() == 'Le meilleur':
+            self.fond = pygame.image.load('images/Metteznous20sur20svp.jpg').convert()
+        elif joueur1.get_pseudo().lower() == 'abel':
+            self.fond = pygame.image.load('images/FondAbel.png').convert()
         else:
             self.fond = pygame.image.load('images/casino.jpg').convert()
-        if joueur1.get_pseudo() == 'Mr.Maurice' or joueur1.get_pseudo() == 'Mr Maurice' or joueur1.get_pseudo() == 'Maurice':
-            joueur1.set_pseudo('Le meilleur')  #Mettez nous des tickets et un 20/20 svp
         fenetre.blit(self.fond, (0, 0))
         coin.activer_rotation()
+        # Jouer les animations des icones des jeux
         if ecran2.ecran.get_actif() and 330 <= pygame.mouse.get_pos()[0] <= 390 and 45 <= pygame.mouse.get_pos()[1] <= 75 :
             fenetre.blit(roulette2, (320, 20))
         else:
@@ -85,13 +90,17 @@ class Ecran2:
         else:
             fenetre.blit(retour, (105, 230))
         dessiner_bouton(fenetre, joueur1.get_pseudo(), bouton2.get_x(), bouton2.get_y(), bouton2.get_largeur(), bouton2.get_hauteur(), blanc, noir, 20)
-        dessiner_bouton(fenetre, f"Solde : {joueur1.get_cagnotte()}", bouton3.get_x(), bouton3.get_y(), bouton3.get_largeur(), bouton3.get_hauteur(), blanc, noir, 25)
+        dessiner_bouton(fenetre, f"Solde : {int(joueur1.get_cagnotte())}", bouton3.get_x(), bouton3.get_y(), bouton3.get_largeur(), bouton3.get_hauteur(), blanc, noir, 25)
         if 330 <= pygame.mouse.get_pos()[0] <= 390 and 170 <= pygame.mouse.get_pos()[1] <= 220 :
             fenetre.blit(machine_a_sous2, (320, 160))
         else:
             fenetre.blit(machine_a_sous1, (320, 160))
+        if 330 <= pygame.mouse.get_pos()[0] <= 390 and 240 <= pygame.mouse.get_pos()[1] <= 290 :
+            fenetre.blit(blackjack2, (320, 231))
+        else:
+            fenetre.blit(blackjack1, (320, 230))
         if 330 <= pygame.mouse.get_pos()[0] <= 390 and 100 <= pygame.mouse.get_pos()[1] <= 150 :
-            fenetre.blit(imgpof2, (320, 90))
+            fenetre.blit(imgpof2, (320, 91))
         else:
             fenetre.blit(imgpof, (320, 90))
         # Affichage des boutons des choix du pile ou face
@@ -145,8 +154,15 @@ class EcranVictoire:
             fenetre.blit(self.retour2, (105, 230))
         else:
             fenetre.blit(self.retour1, (105, 230))
+class EcranBlack:
+    def __init__(self):
+        self.ecran = Ecran()
+    def affiche(self,blackjack):
+        blackjack.set_actif(True)
+        blackjack.main()
 
 ecran1 = Ecran1()
 ecran2 = Ecran2()
 ecran_mort = EcranMort()
 ecran_victoire = EcranVictoire()
+ecran_black = EcranBlack()
