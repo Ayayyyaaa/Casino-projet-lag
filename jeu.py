@@ -4,11 +4,13 @@ from fonctions import dessiner_zone_texte
 from img import *
 from objets_et_variables import *
 from sons import *
-from Ecrans import ecran1,ecran2,ecran_mort,ecran_victoire
+from Ecrans import ecran1,ecran2,ecran_mort,ecran_victoire, ecran_black
 from Machine_a_sous import ecran_machine_a_sous
 from PileouFace import *
 from Roulette_Russe import pistolet
 from Jeu_combat import JeuCombat
+from blackjack import *
+from SQL import *
 import time
 
 pygame.init()
@@ -27,15 +29,19 @@ class Jeu():
         self.txt_codee_cb = ""  
         self.victoire = False
         self.combat = JeuCombat()
+        self.maskotte = False
+        self.curseurabel = False
     def running(self):
         choix_fait = False
         son_joue = False
         dernier_son = time.time()
+        self.id_compte = None
         while self.run:
             if not self.combat.get_actif():
                 # Fermer la fenêtre
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
+                        self.run = False
                         pygame.quit()
                         sys.exit()
                     # Clic de souris
@@ -71,17 +77,21 @@ class Jeu():
                         # Gérer les interactions de l'écran 2 (écran principal)
                         if ecran2.ecran.get_actif():
                             # Lancer la roulette russe
-                            if ecran2.ecran.get_actif() and 330 <= event.pos[0] <= 390 and 45 <= event.pos[1] <= 75 :
+                            if 330 <= event.pos[0] <= 390 and 45 <= event.pos[1] <= 75 :
                                 click.play()
                                 joueur1.set_roulette_active(True)
                                 pileouface.set_actif(False)
                                 pistolet.rouletterusse(joueur1)
                                 joueur1.set_roulette_active(False)
                             # Affichage du jeu de pile ou face
-                            if 335 <= event.pos[0] <= 385 and 100 <= event.pos[1] <= 150 :
+                            if 330 <= event.pos[0] <= 390 and 100 <= event.pos[1] <= 150 :
                                 click.play()
                                 pileouface.set_actif(not pileouface.get_actif())
                                 pileouface.set_cote(None)
+                            # Affichage du jeu de BlackJack
+                            if 330 <= event.pos[0] <= 390 and 240 <= event.pos[1] <= 290 :
+                                click.play()
+                                ecran2.ecran.set_actif(False), ecran_black.ecran.set_actif(True)
                             
                             # Gestion des boutons de choix pour le pile ou face
                             elif pileouface.get_actif():
@@ -95,7 +105,6 @@ class Jeu():
                                     click.play()
                                     pileouface.set_choix('Pile')
                                     choix_fait = True
-
                                 # Lancer l'animation de Pile ou Face quand le joueur a effectué son choix
                                 if choix_fait:
                                     pileouface.activer_animation()
@@ -114,12 +123,12 @@ class Jeu():
                                 ecran2.ecran.set_actif(not ecran2.ecran.get_actif())
                                 ecran_machine_a_sous.ecran.set_actif(not ecran_machine_a_sous.ecran.get_actif())
                             # Lancer la machine à sous
-                            elif 340 <= event.pos[0] <= 390 and 100 <= event.pos[1] <= 250 and joueur1.get_cagnotte() >= 100:
+                            elif 340 <= event.pos[0] <= 390 and 100 <= event.pos[1] <= 250:
                                 if time.time() - dernier_son >= 1.5:
                                     son_gambling.play()
                                     dernier_son = time.time()
                                 ecran_machine_a_sous.lancement()
-                                joueur1.modifier_cagnotte(-100)
+                                joueur1.modifier_cagnotte(-100 - joueur1.get_cagnotte()//100)
                         
                     elif event.type == pygame.KEYDOWN:
                         # Gérer la saisie du nom de joueur
@@ -127,8 +136,10 @@ class Jeu():
                             if event.key == pygame.K_RETURN:
                                 click.play()
                                 joueur1.set_pseudo(self.text)
-                                if joueur1.get_pseudo() == 'abel':
-                                    joueur1.set_cagnotte(100)
+                                self.id_compte = verifier_et_ajouter_pseudo(self.text) 
+                                print(self.id_compte)
+                                if joueur1.get_pseudo().lower() == 'nils':
+                                    joueur1.set_cagnotte(1)
                                 self.text = ''
                             elif event.key == pygame.K_BACKSPACE:
                                 self.text = self.text[:-1]
@@ -159,17 +170,21 @@ class Jeu():
                                 self.txt_codee_cb = self.txt_codee_cb[:-1]
                             elif len(self.txt_codee_cb) < 4 and event.unicode in "0123456789":
                                 self.txt_codee_cb += event.unicode
-                                
+
+                # Afficher l'ecran du Blackjack
+                if ecran_black.ecran.get_actif():
+                    pygame.mouse.set_visible(True)
+                    ecran_black.affiche(blackjack)
                 # Supprimer le pile ou face au changement d'ecran
                 if not ecran2.ecran.get_actif():
                     pileouface.set_actif(False)
+
                 # Conditions de défaite
                 if joueur1.get_cagnotte() <= 0:
                     ecran1.ecran.set_actif(False), ecran2.ecran.set_actif(False), ecran_machine_a_sous.ecran.set_actif(False), ecran_mort.ecran.set_actif(True) 
                     if son_joue is False:
                         son_fall.play()
                         son_joue = True
-
                 # Conditions de victoire
                 if joueur1.get_cagnotte() >= 10000000 and not self.victoire:
                     ecran1.ecran.set_actif(False), ecran2.ecran.set_actif(False), ecran_machine_a_sous.ecran.set_actif(False), ecran_victoire.ecran.set_actif(True)
@@ -202,5 +217,15 @@ class Jeu():
                     pygame.mixer.music.play(-1)
                     self.combat.actif(True)
                     self.combat.lancer()
+                if joueur1.get_pseudo().lower() == 'rulian' or joueur1.get_pseudo().lower() == 'maskottchen':
+                    self.maskotte, self.curseurabel = True, False
+                elif joueur1.get_pseudo().lower() == 'abel':
+                    self.maskotte, self.curseurabel = False, True
+                if self.maskotte:
+                    pygame.mouse.set_visible(False)
+                    fenetre.blit(maskot, (pygame.mouse.get_pos()[0]-25, pygame.mouse.get_pos()[1]-30))
+                elif self.curseurabel:
+                    pygame.mouse.set_visible(False)
+                    fenetre.blit(abel, (pygame.mouse.get_pos()[0]-25, pygame.mouse.get_pos()[1]-30))
             clock.tick(60)
             pygame.display.flip()
